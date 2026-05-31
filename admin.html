@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Panel Admin</title>
+</head>
+<body>
+  <h2>Gestión de Usuarios</h2>
+  <form id="crearUsuario">
+    <input type="text" placeholder="Nombre" id="nombre" required>
+    <input type="text" placeholder="Apellidos" id="apellidos" required>
+    <input type="email" placeholder="Correo" id="correo" required>
+    <input type="password" placeholder="Contraseña" id="password" required>
+    <input type="text" placeholder="Teléfono" id="telefono">
+    <select id="rol" required>
+      <option value="1">Administrador</option>
+      <option value="2">Recepcionista</option>
+      <option value="3">Seguridad</option>
+    </select>
+    <button type="submit">Crear Usuario</button>
+  </form>
+
+  <h2>Bitácora</h2>
+  <button onclick="verBitacora()">Ver Bitácora</button>
+  <pre id="bitacora"></pre>
+
+<script>
+const token = localStorage.getItem('token');
+
+document.getElementById('crearUsuario').addEventListener('submit', async e => {
+  e.preventDefault();
+  const body = {
+    nombre: document.getElementById('nombre').value,
+    apellidos: document.getElementById('apellidos').value,
+    correo: document.getElementById('correo').value,
+    password: document.getElementById('password').value,
+    telefono: document.getElementById('telefono').value,
+    rol: document.getElementById('rol').value
+  };
+
+  const res = await fetch('http://localhost:3000/api/usuarios', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token 
+    },
+    body: JSON.stringify(body)
+  });
+
+  const data = await res.json();
+  alert(JSON.stringify(data, null, 2));
+});
+
+async function verBitacora() {
+  const res = await fetch('http://localhost:3000/api/bitacora', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  });
+  document.getElementById('bitacora').textContent = JSON.stringify(await res.json(), null, 2);
+}
+</script>
+</body>
+</html>

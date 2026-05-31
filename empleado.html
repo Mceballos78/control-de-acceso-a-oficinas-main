@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head><title>Panel Empleado</title></head>
+<body>
+  <h2>Agendar Cita</h2>
+  <form id="agendarCita">
+    <input type="text" id="folio" placeholder="Folio" required>
+    <input type="text" id="visitante" placeholder="Nombre visitante" required>
+    <input type="text" id="identificacion" placeholder="Identificación" required>
+    <button type="submit">Agendar</button>
+  </form>
+
+  <h2>Mis Citas</h2>
+  <button onclick="verCitas()">Ver Citas</button>
+  <pre id="citas"></pre>
+
+<script>
+const token = localStorage.getItem('token');
+
+document.getElementById('agendarCita').addEventListener('submit', async e => {
+  e.preventDefault();
+  const body = {
+    folio: folio.value,
+    visitante: { nombre: visitante.value, identificacion: identificacion.value }
+  };
+  const res = await fetch('http://localhost:3000/api/citas', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify(body)
+  });
+  alert(await res.text());
+});
+
+async function verCitas() {
+  const res = await fetch('http://localhost:3000/api/citas', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  });
+  document.getElementById('citas').textContent = JSON.stringify(await res.json(), null, 2);
+}
+</script>
+</body>
+</html>
